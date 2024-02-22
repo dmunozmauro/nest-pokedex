@@ -9,12 +9,10 @@ import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 @Injectable()
 export class PokemonService {
 
-
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>
   ) { }
-
 
   async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase();
@@ -28,7 +26,7 @@ export class PokemonService {
   }
 
   async findAll(): Promise<Pokemon[]> {
-    const pokemons = await this.pokemonModel.find()
+    const pokemons = await this.pokemonModel.find();
     return pokemons;
   }
 
@@ -71,12 +69,19 @@ export class PokemonService {
     }
   }
 
-  async remove(term: string) {
-    const pokemon = await this.findOne(term);
-    await pokemon.deleteOne();
+  async remove(id: string) {
+    // const pokemon = await this.findOne(id);
+    // await pokemon.deleteOne();
+    // return { id };
+    // const result = await this.pokemonModel.findByIdAndDelete(id);
 
-    return this.findAll()
+    const { acknowledged, deletedCount } = await this.pokemonModel.deleteOne({ _id: id });
 
+    if (deletedCount === 0) {
+      throw new BadRequestException(`ID de Pokemon ${id} no existe`);
+    }
+
+    return `Pokemon eliminado (ID: ${id})`;
   }
 
   private handleException(error: any) {
