@@ -1,21 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import axio, { AxiosInstance } from 'axios';
+import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { PokeResponse } from './interfaces/poke-response.interface';
-
 import { Pokemon } from 'src/pokemon/entities/pokemon.entity';
-import { PokemonService } from '../pokemon/pokemon.service';
-import { InjectModel } from '@nestjs/mongoose';
+import { AxiosAdapter } from 'src/common/adapters/axios.adapter';
+
 
 @Injectable()
 export class SeedService {
 
-  private readonly axios: AxiosInstance = axio;
-
   constructor(
     @InjectModel(Pokemon.name)
-    private readonly pokemonModel: Model<Pokemon>
+    private readonly pokemonModel: Model<Pokemon>,
+    private readonly http: AxiosAdapter
   ) { }
 
 
@@ -23,7 +21,7 @@ export class SeedService {
 
     await this.pokemonModel.deleteMany({});
 
-    const { data } = await this.axios.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=151');
+    const data = await this.http.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=1000');
 
     // Inserción 1 a 1 dentro de la BD
     // data.results.forEach(({ name, url }) => {
