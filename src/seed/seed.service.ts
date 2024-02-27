@@ -21,7 +21,7 @@ export class SeedService {
 
     await this.pokemonModel.deleteMany({});
 
-    const data = await this.http.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=1000');
+    const data = await this.http.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=1026');
 
     // Inserción 1 a 1 dentro de la BD
     // data.results.forEach(({ name, url }) => {
